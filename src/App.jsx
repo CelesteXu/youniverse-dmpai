@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import Nav from './components/Nav.jsx';
-import { Asset, CTA, Demo, FAQ, Footer, Hero, Identity, Pricing, Problem, Process, Vision } from './components/Sections.jsx';
+import { Asset, CTA, Demo, FAQ, Footer, Hero, Identity, Problem, Process, Vision } from './components/Sections.jsx';
 
 const stars = [
   { left: '7%', top: '14%', size: 2, delay: '-3s', tone: 'white' },
@@ -171,7 +171,6 @@ export default function App() {
         <Demo />
         <Identity />
         <Asset />
-        <Pricing />
         <Process />
         <FAQ />
         <Vision />

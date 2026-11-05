@@ -4,7 +4,6 @@ import { ArrowUpRight, BrandSymbol } from './Visuals.jsx';
 const navItems = [
   { href: '#demo', label: '产品演示' },
   { href: '#asset', label: '数字资产' },
-  { href: '#pricing', label: '方案价格' },
   { href: '#faq', label: '常见问题' },
 ];
 

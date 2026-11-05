@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   assets,
   bookingEmail,
@@ -46,7 +46,6 @@ export function Hero() {
           <div className="hero-meta hero-enter" style={{ '--enter-order': 4 }} aria-label="交付特点">
             <span>多页面网站</span>
             <span>源码交付</span>
-            <span>无平台年费</span>
           </div>
         </div>
         <div className="hero-enter hero-enter--visual" style={{ '--enter-order': 2 }}>
@@ -139,6 +138,35 @@ export function Identity() {
 }
 
 export function Asset() {
+  const listRef = useRef(null);
+
+  useEffect(() => {
+    const list = listRef.current;
+    const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    let lockedUntil = 0;
+    const onWheel = (event) => {
+      if (motion.matches || event.ctrlKey || Math.abs(event.deltaY) < Math.abs(event.deltaX)) return;
+      const rows = Array.from(list.children);
+      const center = window.innerHeight / 2;
+      const bounds = list.getBoundingClientRect();
+      if (center < bounds.top || center > bounds.bottom) return;
+      const now = Date.now();
+      if (now < lockedUntil) { event.preventDefault(); return; }
+      const current = rows.reduce((closest, row, index) => {
+        const rect = row.getBoundingClientRect();
+        const distance = Math.abs(rect.top + rect.height / 2 - center);
+        return distance < closest.distance ? { index, distance } : closest;
+      }, { index: 0, distance: Infinity }).index;
+      const next = current + (event.deltaY > 0 ? 1 : -1);
+      if (!event.deltaY || next < 0 || next >= rows.length) return;
+      event.preventDefault();
+      lockedUntil = now + 700;
+      rows[next].scrollIntoView({ behavior: 'smooth', block: 'center' });
+    };
+    window.addEventListener('wheel', onWheel, { passive: false });
+    return () => window.removeEventListener('wheel', onWheel);
+  }, []);
+
   return (
     <section className="section asset-section" id="asset" aria-labelledby="asset-title">
       <div className="container">
@@ -152,7 +180,7 @@ export function Asset() {
           />
           <div className="asset-content">
             <AssetOrbit />
-            <div className="asset-list">
+            <div className="asset-list" ref={listRef}>
               {assets.map((asset, index) => (
                 <article className="asset-item reveal" key={asset.number} style={{ '--delay': `${index * 70}ms` }}>
                   <span>{asset.number}</span>
@@ -343,7 +371,7 @@ export function FAQ() {
           <SectionHeader
             kicker="BEFORE WE BEGIN."
             title="开始之前，先把问题说清楚。"
-            intro="以下回答交付、预览、方案、部署、授权与支付的实际问题。"
+            intro="以下回答交付、预览、部署与授权的实际问题。"
             id="faq-title"
           />
         </div>
@@ -423,7 +451,7 @@ export function CTA() {
           <div className="cta-content">
             <p className="kicker">YOUR UNIVERSE STARTS HERE.</p>
             <h2 id="cta-title">你的个人网站，<br />从这里开始。</h2>
-            <p>选择适合你的方案，预约定制；随后通过访谈或问卷，确认需求与排期。</p>
+            <p>预约定制；随后通过访谈或问卷，确认需求与排期。</p>
             <div className="cta-actions">
               <a className="button button--primary button--large" href={bookingHref}>
                 <span>预约定制个人网站</span>
